@@ -1,0 +1,65 @@
+ROADMAP PIPEX "|"
+
+Fase 1: Preparación del entorno y comprensión básica de pipes
+
+    Tarea 1.1: Revisión de conceptos básicos
+        Estudia el funcionamiento de las funciones fork(), execve(), pipe(), dup2(), y waitpid().
+        Lee sobre cómo funcionan los pipes y las redirecciones en Unix.
+        Familiarízate con los comandos que deberás ejecutar en tu programa, como ls, cat, etc.
+
+    Tarea 1.2: Configuración del proyecto
+        Crea la estructura básica del proyecto en C.
+        Prepara un Makefile para compilar el proyecto.
+        Comienza a escribir funciones auxiliares para manejar la apertura de archivos y redirección.
+
+Fase 2: Implementación de pipes básicos
+
+    Tarea 2.1: Crear un pipe básico
+        Implementa un programa que cree un pipe entre dos procesos y pase datos entre ellos.
+        Puedes probar con un ejemplo sencillo como pasar la salida de ls a través del pipe y luego leerla en el proceso hijo.
+
+    Tarea 2.2: Redirección de salida en el proceso hijo
+        Redirige la salida de un comando para que se pase al pipe usando dup2().
+
+    Tarea 2.3: Redirección de entrada en el proceso hijo
+        Redirige la entrada de un comando desde el pipe, asegurando que la salida del primer proceso se pase al segundo.
+
+Fase 3: Implementación de redirección de archivos
+
+    Tarea 3.1: Manejo de redirección de salida (>)
+        Abre un archivo para redirigir la salida de un proceso a ese archivo en vez de a la pantalla (stdout).
+
+    Tarea 3.2: Manejo de redirección de entrada (<)
+        Abre un archivo para redirigir la entrada de un proceso desde ese archivo en vez de desde la terminal (stdin).
+
+    Tarea 3.3: Combinación de redirecciones y pipes
+        Permite que tu programa maneje tanto la redirección de entrada/salida como la conexión entre procesos con pipes.
+
+Fase 4: Manejo de múltiples procesos y ejecución de comandos
+
+    Tarea 4.1: Manejo de múltiples procesos
+        Modifica tu programa para permitir que se ejecuten más de dos comandos en cadena (por ejemplo, command1 | command2 | command3).
+
+    Tarea 4.2: Ejecución de comandos con execve()
+        Utiliza execve() para ejecutar los comandos pasados como parámetros a tu programa.
+
+    Tarea 4.3: Error Handling
+        Asegúrate de que tu programa maneje correctamente errores comunes como fallos de fork(), fallos de execve(), etc.
+
+Fase 5: Refinamiento y pruebas
+
+    Tarea 5.1: Pruebas unitarias
+        Realiza pruebas para cada función y asegúrate de que todos los casos de borde sean manejados adecuadamente (por ejemplo, cuando los archivos no existen o los pipes no se pueden crear).
+
+    Tarea 5.2: Optimización
+        Revisa tu código y busca posibles áreas para optimizar el uso de memoria o mejorar la legibilidad.
+
+    Tarea 5.3: Documentación
+        Añade comentarios detallados en tu código y escribe una breve documentación sobre cómo usar el programa.
+
+Fase 6: Revisión final
+
+    Tarea 6.1: Revisión de calidad de código
+        Verifica que el estilo de codificación sea consistente y claro.
+    Tarea 6.2: Verificación de cumplimiento de requisitos
+        Asegúrate de que tu programa cumpla con todas las especificaciones del proyecto, como los comandos soportados, el manejo de errores y la correcta salida.
