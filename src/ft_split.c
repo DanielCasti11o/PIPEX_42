@@ -6,11 +6,24 @@
 /*   By: dacastil <dacastil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:32:11 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/03/18 19:10:25 by dacastil         ###   ########.fr       */
+/*   Updated: 2025/03/19 22:16:32 by dacastil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
+
+void	ft_error(char *msg, int flag)
+{
+	int	i;
+
+	i = 0;
+	while (msg[i])
+	{
+		write(1, &msg[i], 1);
+		i++;
+	}
+	exit(flag);
+}
 
 static void	free_parcial(char **splres, int i)
 {

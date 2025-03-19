@@ -6,7 +6,7 @@
 /*   By: dacastil <dacastil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:16:28 by dacastil          #+#    #+#             */
-/*   Updated: 2025/03/19 13:53:12 by dacastil         ###   ########.fr       */
+/*   Updated: 2025/03/19 22:19:24 by dacastil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,42 +29,44 @@ void	fr_words(char **wds)
 char	**ft_findpath(char **envp)
 {
 	int		i;
-	char	*line;
 	char	**wd;
 
 	i = 0;
-	while (envp[i])
+	while (envp[i] && ft_strncmp(envp[i], "PATH=", 5))
 	{
-		if (ft_strncmp(envp[i], "PATH=", 5))
-			line = (envp[i] + 5); // retorna el string desde la posicion 5
 		i++;
 	}
-
-	wd = ft_split(line, ':');
+	wd = ft_split(envp[i] + 5, ':');
+	if (!wd)
+		return (fr_words(envp), NULL);
 	return (wd);
 }
 
-char	**split_command(char *arg)
+char	**split_command(char *arg, char *command)
 {
 	char	**command_mask;
-	char	*command;
-	char	*str;
+	char	*str_arg;
+	char	*trimm;
 
-	str = ft_strchr(arg, '\'');
-	if (!str) // si no tiene 'arg'
+	str_arg = ft_strchr(arg, 39);
+	if (!str_arg)
 	{
 		command_mask = ft_split(arg, ' ');
-		free(arg);
+		if (!command_mask)
+			return (free(str_arg), NULL);
 		return (command_mask);
 	}
 	else
 	{
 		command_mask = ft_split(arg, ' ');
 		command = command_mask[0];
+		trimm = ft_strtrim(str_arg, "'");
+		if (!trimm)
+			return (free(str_arg), NULL);
 		fr_words(command_mask);
-		command_mask = (char *[]){command, ft_strtrim(str, "'"), NULL};
-		free(str);
-		free(command);
+		command_mask = (char *[]){command, trimm, NULL};
+		if (!command_mask)
+			return (free(str_arg), free(trimm), NULL);
 		return (command_mask);
 	}
 }
@@ -73,32 +75,37 @@ char	*creat_path(char	*path, char *argv)
 	char	*result;
 	char	*base_temp;
 
-	if (ft_strchr(argv, '/')) // Por si viene con ruta
+	if (ft_strchr(argv, '\''))
 		return (ft_strdup(argv));
-	base_temp = ft_strjoin(path, "/"); // base de la ruta
-	result = ft_strjoin(base_temp, argv); // la ruta mas el comando, ruta completa
-	if (!result)
+	base_temp = ft_strjoin(path, "/");
+	if (!base_temp)
 		return (NULL);
+	result = ft_strjoin(base_temp, argv);
+	if (!result)
+		return (free(base_temp), NULL);
 	free(base_temp);
 	return(result);
 }
 
 
-void	exec_command(char **rute_paths, char **command_arg, char **argv, int ix)
+void	exec_command(char **r_paths, char **command, char **envp)
 {
 	char	*path;
 	int		i;
 
 	i = 0;
-	while (rute_paths[i])
+	while (r_paths[i])
 	{
-		path = creat_path(rute_paths[i], argv[ix]);
+		path = creat_path(r_paths[i], command[0]);
+		if (!path)
+			return (fr_words(r_paths), fr_words(command),
+				fr_words(envp), ft_error("ERROR: path\n", 1));
 		if (access(path, X_OK) == 0)
 		{
-			execve(path, command_arg, rute_paths);
+			execve(path, command, envp);
 		}
 		free(path);
 		i++;
 	}
-
+	ft_error("Invalid command\n", 1);
 }
