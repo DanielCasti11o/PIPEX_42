@@ -6,7 +6,7 @@
 /*   By: dacastil <dacastil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:16:28 by dacastil          #+#    #+#             */
-/*   Updated: 2025/03/20 14:45:26 by dacastil         ###   ########.fr       */
+/*   Updated: 2025/03/20 16:15:18 by dacastil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ char	**split_command(char *arg, char *command)
 	{
 		command_mask = ft_split(arg, ' ');
 		if (!command_mask)
-			return (free(str_arg), NULL);
+			return (free(str_arg), ft_error("Command invalid\n", 1), NULL);
 		return (command_mask);
 	}
 	else
