@@ -1,30 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_pipex.c                                      :+:      :+:    :+:   */
+/*   process.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dacastil <dacastil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:16:28 by dacastil          #+#    #+#             */
-/*   Updated: 2025/03/19 22:19:24 by dacastil         ###   ########.fr       */
+/*   Updated: 2025/03/20 14:45:26 by dacastil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
 #include "../libft_bonus/libft.h"
-
-void	fr_words(char **wds)
-{
-	int	i;
-
-	i = 0;
-	while (wds[i])
-	{
-		free(wds[i]);
-		i++;
-	}
-	free(wds);
-}
 
 char	**ft_findpath(char **envp)
 {
@@ -36,11 +23,25 @@ char	**ft_findpath(char **envp)
 	{
 		i++;
 	}
-	wd = ft_split(envp[i] + 5, ':');
+	wd = ft_split((envp[i] + 5), ':');
 	if (!wd)
-		return (fr_words(envp), NULL);
+		return (NULL);
 	return (wd);
 }
+
+char	**process_c(char *command, char *trimm)
+{
+	char	**command_mask;
+
+	command_mask = malloc(3 * sizeof(char *));
+	if (!command_mask)
+		return (NULL);
+	command_mask[0] = command;
+	command_mask[1] = trimm;
+	command_mask[2] = NULL;
+	return (command_mask);
+}
+
 
 char	**split_command(char *arg, char *command)
 {
@@ -59,17 +60,18 @@ char	**split_command(char *arg, char *command)
 	else
 	{
 		command_mask = ft_split(arg, ' ');
-		command = command_mask[0];
+		command = ft_strdup(command_mask[0]);
 		trimm = ft_strtrim(str_arg, "'");
 		if (!trimm)
 			return (free(str_arg), NULL);
 		fr_words(command_mask);
-		command_mask = (char *[]){command, trimm, NULL};
+		command_mask = process_c(command, trimm);
 		if (!command_mask)
-			return (free(str_arg), free(trimm), NULL);
+			return (free(command), free(trimm), NULL);
 		return (command_mask);
 	}
 }
+
 char	*creat_path(char	*path, char *argv)
 {
 	char	*result;
@@ -84,7 +86,7 @@ char	*creat_path(char	*path, char *argv)
 	if (!result)
 		return (free(base_temp), NULL);
 	free(base_temp);
-	return(result);
+	return (result);
 }
 
 
@@ -107,5 +109,7 @@ void	exec_command(char **r_paths, char **command, char **envp)
 		free(path);
 		i++;
 	}
+	fr_words(r_paths);
+	fr_words(command);
 	ft_error("Invalid command\n", 1);
 }
