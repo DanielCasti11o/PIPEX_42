@@ -6,7 +6,7 @@
 /*   By: dacastil <dacastil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 18:10:22 by dacastil          #+#    #+#             */
-/*   Updated: 2025/03/20 16:26:26 by dacastil         ###   ########.fr       */
+/*   Updated: 2025/03/20 18:38:05 by dacastil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,25 +65,25 @@ void	process_command(char **envp, char **argv, int ix_argv)
 	char	*command;
 
 	command = NULL;
+	rute_paths = NULL;
+	if (ft_strlen(argv[ix_argv]) == 0)
+		return (fr_words(rute_paths),
+			ft_error("Error: Invalid Command\n", 1));
 	if (!ft_strchr(argv[ix_argv], '/'))
 	{
 		rute_paths = ft_findpath(envp);
 		if (!rute_paths)
 			ft_error("Error: envp\n", 1);
-		if (ft_strlen(argv[ix_argv]) == 0)
-		{
-			fr_words(rute_paths);
-			ft_error("Error: Invalid Command\n", 1);
-		}
 	}
 	command_arg = split_command(argv[ix_argv], command);
 	if (!command_arg)
-		return (fr_words(envp), fr_words(argv),
-			ft_error("ERROR: command\n", 1));
+		ft_error("ERROR: command\n", 1);
 	if (!ft_strchr(argv[ix_argv], '/'))
 		exec_command(rute_paths, command_arg, envp);
 	else
-		exec_command(command_arg, command_arg, envp);
+	{
+		execve(argv[ix_argv], command_arg, envp);
+	}
 }
 
 // for (int i = 0; rute_paths[i]; i++)

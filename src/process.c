@@ -6,7 +6,7 @@
 /*   By: dacastil <dacastil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:16:28 by dacastil          #+#    #+#             */
-/*   Updated: 2025/03/20 16:15:18 by dacastil         ###   ########.fr       */
+/*   Updated: 2025/03/20 16:45:03 by dacastil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,8 @@ void	exec_command(char **r_paths, char **command, char **envp)
 		free(path);
 		i++;
 	}
-	fr_words(r_paths);
+	if (r_paths)
+		fr_words(r_paths);
 	fr_words(command);
 	ft_error("Invalid command\n", 1);
 }
