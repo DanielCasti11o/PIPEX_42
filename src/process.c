@@ -6,7 +6,7 @@
 /*   By: dacastil <dacastil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:16:28 by dacastil          #+#    #+#             */
-/*   Updated: 2025/03/20 16:45:03 by dacastil         ###   ########.fr       */
+/*   Updated: 2025/03/20 21:21:39 by dacastil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,17 +29,30 @@ char	**ft_findpath(char **envp)
 	return (wd);
 }
 
-char	**process_c(char *command, char *trimm)
+char	**process_c(char *command, char *trimm, char *str_arg, char **com_mk)
 {
-	char	**command_mask;
+	char	**command_mask_new;
+	int		i;
 
-	command_mask = malloc(3 * sizeof(char *));
-	if (!command_mask)
-		return (NULL);
-	command_mask[0] = command;
-	command_mask[1] = trimm;
-	command_mask[2] = NULL;
-	return (command_mask);
+	(void)trimm;
+	i = 0;
+	while (com_mk[i])
+		i++;
+	command_mask_new = malloc((i + 1) * sizeof(char *));
+	if (!command_mask_new)
+		return (fr_words(com_mk), NULL);
+	i = 1;
+	command_mask_new[0] = command;
+	while (com_mk[i])
+	{
+		command_mask_new[i] = ft_strtrim(com_mk[i], "'");
+		if (!command_mask_new[i])
+			return (free(str_arg), fr_words(com_mk), NULL);
+		i++;
+	}
+	fr_words(com_mk);
+	command_mask_new[i] = NULL;
+	return (command_mask_new);
 }
 
 
@@ -49,23 +62,21 @@ char	**split_command(char *arg, char *command)
 	char	*str_arg;
 	char	*trimm;
 
-	str_arg = ft_strchr(arg, 39);
+	trimm = NULL;
+	str_arg = ft_strchr(arg, '\'');
 	if (!str_arg)
 	{
 		command_mask = ft_split(arg, ' ');
 		if (!command_mask)
-			return (free(str_arg), ft_error("Command invalid\n", 1), NULL);
+			return (free(str_arg),
+				ft_error("ERROR: Command invalid\n", 1), NULL);
 		return (command_mask);
 	}
 	else
 	{
 		command_mask = ft_split(arg, ' ');
 		command = ft_strdup(command_mask[0]);
-		trimm = ft_strtrim(str_arg, "'");
-		if (!trimm)
-			return (free(str_arg), NULL);
-		fr_words(command_mask);
-		command_mask = process_c(command, trimm);
+		command_mask = process_c(command, trimm, str_arg, command_mask);
 		if (!command_mask)
 			return (free(command), free(trimm), NULL);
 		return (command_mask);
@@ -112,5 +123,5 @@ void	exec_command(char **r_paths, char **command, char **envp)
 	if (r_paths)
 		fr_words(r_paths);
 	fr_words(command);
-	ft_error("Invalid command\n", 1);
+	ft_error("ERROR: Invalid command\n", 1);
 }

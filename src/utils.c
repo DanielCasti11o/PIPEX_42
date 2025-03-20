@@ -6,18 +6,20 @@
 /*   By: dacastil <dacastil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:32:11 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/03/20 14:45:30 by dacastil         ###   ########.fr       */
+/*   Updated: 2025/03/20 21:19:45 by dacastil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
+
+#include <errno.h>
 
 void	ft_error(char *msg, int flag)
 {
 	int	i;
 
 	i = 0;
-	perror(msg);
+	ft_putstr(msg);
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	exit(flag);
@@ -34,6 +36,21 @@ void	fr_words(char **wds)
 		i++;
 	}
 	free(wds);
+}
+
+void	ft_putstr(char *s)
+{
+	int	ln;
+
+	ln = 0;
+	if (!s)
+		s = "(null)";
+	while (s[ln])
+	{
+		write (1, &s[ln], 1);
+		ln++;
+	}
+	return ;
 }
 
 // #include <stdio.h>

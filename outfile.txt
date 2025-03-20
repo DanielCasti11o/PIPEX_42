@@ -1,8 +1,11 @@
-fahiofh
-hola
-hola dfiog
-rfeoighio
-rwGregRGgr hola
-rwGregRGgrrg
-rwGregRGgrRGhola
-WGmrrw hola
+include
+infile.txt
+libft_bonus
+ls
+Makefile
+nopermisos.txt
+out
+outfile.txt
+pipex
+README.md
+src
