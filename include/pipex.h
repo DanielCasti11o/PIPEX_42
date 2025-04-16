@@ -6,7 +6,7 @@
 /*   By: dacastil <dacastil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 10:53:29 by dacastil          #+#    #+#             */
-/*   Updated: 2025/03/20 21:19:34 by dacastil         ###   ########.fr       */
+/*   Updated: 2025/04/16 16:09:40 by dacastil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,13 @@
 # include <string.h>
 # include <fcntl.h>
 # include "../libft_bonus/libft.h"
+# include "get_next_line_bonus.h"
+
+// typedef struct s_pid_b
+// {
+// 	pid_t	*pids;
+// 	int		*pipefd[2];
+// }	t_pid_b;
 
 typedef struct s_pid
 {
@@ -39,5 +46,9 @@ char	*creat_path(char	*path, char *argv);
 void	ft_error(char *msg, int flag);
 char	**process_c(char *command, char *trimm, char *str_arg, char **com_mk);
 void	ft_putstr(char *s);
+
+// BONUS
+
+
 
 #endif
