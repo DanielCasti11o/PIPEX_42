@@ -1,17 +1,52 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   utils_pipex.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/14 14:32:11 by daniel-cast       #+#    #+#             */
-/*   Updated: 2025/04/21 14:58:22 by daniel-cast      ###   ########.fr       */
+/*   Created: 2025/04/21 14:53:00 by daniel-cast       #+#    #+#             */
+/*   Updated: 2025/04/22 16:08:27 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
 
+void	destroy_prh(t_pid_b *prh, int n_pipes)
+{
+	int	i;
+
+	i = 0;
+	prh->index = 0;
+	if (prh->pids)
+		free(prh->pids);
+	while (i < n_pipes)
+	{
+		close(prh->pipefd[i][0]);
+		close(prh->pipefd[i][1]);
+		free(prh->pipefd[i]);
+		i++;
+	}
+	free(prh->pipefd);
+	free(prh);
+}
+
+void	start_pipe(t_pid_b *process, int n_pipes)
+{
+	int	i;
+
+	i = 0;
+	process->pipefd = malloc(sizeof(int[2]) * n_pipes);
+	while (i < n_pipes)
+	{
+	if (pipe(process->pipefd[i]) < 0)
+		{
+			destroy_prh(process, n_pipes);
+			ft_error("ERROR: Pipe failed\n", 1);
+		}
+		i++;
+	}
+}
 #include <errno.h>
 
 void	ft_error(char *msg, int flag)
@@ -49,21 +84,3 @@ void	ft_putstr(char *s)
 	}
 	return ;
 }
-
-// #include <stdio.h>
-
-// int main()
-// {
-// 	char	s[] = " 1  2a, 3 --h ";
-// 	char	d;
-// 	char	**result;
-
-// 	d = ' ';
-// 	result = ft_split(s, d);
-// 	if (result)
-// 	{
-// 		for (int i = 0; result[i]; i++)
-// 			printf("%s\n", result[i]);  // Imprimir cada subcadena
-// 	}
-// 	return (0);
-// }

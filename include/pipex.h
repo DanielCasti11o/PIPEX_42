@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dacastil <dacastil@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 10:53:29 by dacastil          #+#    #+#             */
-/*   Updated: 2025/04/16 16:09:40 by dacastil         ###   ########.fr       */
+/*   Updated: 2025/04/22 16:08:02 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,13 @@ typedef struct s_pid
 	int		pipefd[2]; // extremos read & write
 }	t_pid;
 
+typedef struct s_pid_b
+{
+	pid_t	*pids;
+	int		(*pipefd)[2]; // extremos read & write
+	int		index;
+}	t_pid_b;
+
 void	create_process(t_pid *process, char **argv, char **envp);
 void	red_input(char *infile, t_pid *process);
 void	red_output(char *outfile, t_pid *process);
@@ -49,6 +56,15 @@ void	ft_putstr(char *s);
 
 // BONUS
 
-
+t_pid_b	*init_prh(char **argv, int argc);
+void	start_pipe(t_pid_b *process, int n_pipes);
+void	destroy_prh(t_pid_b *prh, int n_pipes);
+void	red_inputs(char *infile, t_pid_b *process, int i, char **argv);
+void	red_output_f(char *outfile, t_pid_b *process, char **argv);
+void	create_process_pipes(t_pid_b *process, char **argv, char **envp, int argc);
+int		ft_heredoc(char **argv);
+void	process_here_doc(t_pid_b *process, char **argv, char **envp, int argc);
+void	father_final_heredoc(t_pid_b *process, char **argv, char **env, int argc);
+void	father_final(t_pid_b *process, char **argv, char **env, int argc);
 
 #endif

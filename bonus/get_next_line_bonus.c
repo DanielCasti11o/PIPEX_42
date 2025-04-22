@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dacastil <dacastil@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 18:31:02 by dacastil          #+#    #+#             */
-/*   Updated: 2025/04/16 16:10:13 by dacastil         ###   ########.fr       */
+/*   Updated: 2025/04/21 18:06:35 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/get_next_line_bonus.h"
+#include "../include/pipex.h"
 
 char	*free_join(char *buffer, char *buff)
 {
@@ -129,37 +130,37 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-#include <stdio.h>
+// #include <stdio.h>
 
-int main(void)
-{
-    int fd1, fd2;
-    char *line;
+// int main(void)
+// {
+//     int fd1, fd2;
+//     char *line;
 
-    // Abre varios archivos en modo lectura
-    fd1 = open("text.txt", O_RDONLY);
-    fd2 = open("rfx.txt", O_RDONLY);
+//     // Abre varios archivos en modo lectura
+//     fd1 = open("text.txt", O_RDONLY);
+//     fd2 = open("rfx.txt", O_RDONLY);
 
-    // Lee las líneas del primer archivo
-    printf("Leyendo archivo1.txt:\n");
-    while ((line = get_next_line(fd1)) != NULL)
-    {
-        printf("%s", line);
-        free(line);
-    }
+//     // Lee las líneas del primer archivo
+//     printf("Leyendo archivo1.txt:\n");
+//     while ((line = get_next_line(fd1)) != NULL)
+//     {
+//         printf("%s", line);
+//         free(line);
+//     }
 
-    // Lee las líneas del segundo archivo
-    printf("\nLeyendo archivo2.txt:\n");
-    while ((line = get_next_line(fd2)) != NULL)
-    {
-        printf("%s", line);
-        free(line);
-    }
+//     // Lee las líneas del segundo archivo
+//     printf("\nLeyendo archivo2.txt:\n");
+//     while ((line = get_next_line(fd2)) != NULL)
+//     {
+//         printf("%s", line);
+//         free(line);
+//     }
 
-    // Cierra los archivos
-    close(fd1);
-    close(fd2);
+//     // Cierra los archivos
+//     close(fd1);
+//     close(fd2);
 
-    return (0);
-}
+//     return (0);
+// }
 

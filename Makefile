@@ -3,22 +3,26 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dacastil <dacastil@student.42.fr>          +#+  +:+       +#+         #
+#    By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/18 10:53:25 by dacastil          #+#    #+#              #
-#    Updated: 2025/03/20 22:04:06 by dacastil         ###   ########.fr        #
+#    Updated: 2025/04/22 14:30:11 by daniel-cast      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+BONUS_EX = pipex_bonus
 EXEC = pipex
 CC = cc
 RM = rm -f
-FLAGS = -Wall -Wextra -Werror -g3 -I ./libft_bonus -I ./include
+FLAGS = -Wall -Wextra -Werror -g3 -fsanitize=address # -I ./libft_bonus -I ./include
 SRC_DIR = ./src
+B_DIR = ./bonus
 INCLUDE_DIR = ./pipex.h
 LIBFT_DIR = ./libft_bonus
 LIBFT = $(LIBFT_DIR)/libft.a
-SRC =$(SRC_DIR)/pipex.c $(SRC_DIR)/process.c $(SRC_DIR)/utils.c
+SRC = $(SRC_DIR)/pipex.c $(SRC_DIR)/process.c $(SRC_DIR)/utils.c
+BONUS = $(wildcard $(B_DIR)/*.c)
+OBJS_B = $(BONUS:.c=.o)
 OBJS = $(SRC:.c=.o)
 RED             = \033[1;31m
 YELLOW          = \033[1;33m
@@ -73,10 +77,15 @@ $(LIBFT):
 	@ $(MAKE) -C $(LIBFT_DIR) bonus > /dev/null 2>&1
 
 $(EXEC): $(OBJS) $(LIBFT)
-	@ $(CC) $(OBJS) $(LIBFT) -o $(EXEC) $(FLAGS) > /dev/null 2>&1
+	 $(CC) $(OBJS) $(LIBFT) -o $(EXEC) $(FLAGS)
+
+bonus: $(LIBFT) $(BONUS_EX)
+
+$(BONUS_EX): $(OBJS_B) $(LIBFT)
+	$(CC) $(OBJS_B) $(LIBFT) -o $(BONUS_EX) $(FLAGS)
 
 %.o: %.c
-	@ $(CC) $(FLAGS) -c $< -o $@ > /dev/null 2>&1
+	 $(CC) $(FLAGS) -c $< -o $@
 
 clean:
 	@ echo "$(RED) Deleting objects..."
@@ -87,6 +96,7 @@ fclean:
 	@ echo "$(RED) Deleting all..."
 	@ $(RM) $(OBJS) $(EXEC) > /dev/null 2>&1
 	@ $(MAKE) -C $(LIBFT_DIR) fclean > /dev/null 2>&1
+	@ $(RM) $(OBJS_B) $(BONUS_EXE)
 
 re: fclean all
 

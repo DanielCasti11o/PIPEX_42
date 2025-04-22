@@ -3,62 +3,67 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dacastil <dacastil@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daniel-castillo <daniel-castillo@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 17:19:27 by dacastil          #+#    #+#             */
-/*   Updated: 2025/04/16 16:13:40 by dacastil         ###   ########.fr       */
+/*   Updated: 2025/04/22 16:07:31 by daniel-cast      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
 
-
-#include "../include/pipex.h"
-
-void	red_output(char *outfile, t_pid *process)
+void	red_output_f(char *outfile, t_pid_b *process, char **argv)
 {
 	int	fd;
 
-	close(process->pipefd[1]);
-	fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	close(process->pipefd[process->index][1]);
+	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+		fd = open(outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	else
+		fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd < 0)
 	{
-		close(process->pipefd[0]);
+		close(process->pipefd[process->index][0]);
 		ft_error("ERROR: Open Failed\n", 1);
 	}
-	if (dup2(process->pipefd[0], STDIN_FILENO) < 0
+	if (dup2(process->pipefd[process->index][0], STDIN_FILENO) < 0
 		|| dup2(fd, STDOUT_FILENO) < 0)
 	{
 		close(fd);
-		close(process->pipefd[0]);
+		close(process->pipefd[process->index][0]);
 		ft_error("ERROR: DUP2\n", 1);
 
 	}
-	close(process->pipefd[0]);
+	close(process->pipefd[process->index][0]);
 	close(fd);
 }
 
-void	red_input(char *infile, t_pid *process)
+void	red_inputs(char *infile, t_pid_b *process, int i, char **argv)
 {
 	int	fd;
 
-	close(process->pipefd[0]);
-	fd = open(infile, O_RDONLY, 0664);
+	close(process->pipefd[i][0]);
+	if (ft_strncmp(infile, "here_doc", 8) == 0)
+		fd = ft_heredoc(argv);
+	else
+		fd = open(infile, O_RDONLY, 0664);
 	if (fd < 0)
 	{
-		close(process->pipefd[1]);
+		close(process->pipefd[i][1]);
 		ft_error("ERROR: Open failed\n", 1);
 	}
-	if (dup2(fd, STDIN_FILENO) < 0
-		|| dup2(process->pipefd[1], STDOUT_FILENO) < 0)
+	if (i != 0)
+		dup2(process->pipefd[i - 1][0], STDIN_FILENO);
+	else
+		dup2(fd, STDIN_FILENO);
+	if (dup2(process->pipefd[i][1], STDOUT_FILENO) < 0)
 	{
 		close(fd);
-		close(process->pipefd[1]);
+		close(process->pipefd[i][1]);
 		ft_error("ERROR: DUP2\n", 1);
-
 	}
 	close(fd);
-	close(process->pipefd[1]);
+	close(process->pipefd[i][1]);
 }
 
 void	process_command(char **envp, char **argv, int ix_argv)
@@ -90,40 +95,56 @@ void	process_command(char **envp, char **argv, int ix_argv)
 	}
 }
 
-void	create_process(t_pid *process, char **argv, char **envp)
+void	create_process_pipes(t_pid_b *process, char **argv, char **envp, int argc)
 {
-	process->pid1 = fork();
-	if (process->pid1 < 0)
+	int	n_pipes;
+
+	process->index = 0;
+	n_pipes = argc - 3;
+	start_pipe(process, n_pipes);
+	while (process->index < n_pipes)
 	{
-		close(process->pipefd[0]);
-		close(process->pipefd[1]);
-		ft_error("ERROR: Fork failed\n", 1);
+		process->pids[process->index] = fork();
+		if (process->pids[process->index] < 0)
+		{
+			close(process->pipefd[process->index][0]);
+			close(process->pipefd[process->index][1]);
+			ft_error("ERROR: Fork failed\n", 1);
+		}
+		else if (process->pids[process->index] == 0)
+		{
+			red_inputs(argv[process->index], process, process->index, argv);
+			process_command(envp, argv, (process->index + 2));
+		}
+		else if (process->pids[process->index] > 0)
+			father_final(process, argv, envp, argc);
+		process->index++;
 	}
-	else if (process->pid1 == 0)
-	{
-		red_input(argv[1], process);
-		process_command(envp, argv, 2);
-	}
-	red_output(argv[4], process);
-	process_command(envp, argv, 3);
-	waitpid(process->pid1, NULL, 0);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_pid	*process;
+	t_pid_b	*process;
 
-	if (argc < 5)
-		ft_error("ERROR: Invalid Arguments Format! \n", 1);
+	process = init_prh(argv, argc); // aqui hago la reserva de memoria
 	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
 	{
 		if (argc < 6)
+		{
+			destroy_prh(process, argc - 4);
 			ft_error ("For here_doc is necesary 6 args!\n", 1);
-		ft_heredoc(argv);
+		}
+		process_here_doc(process, argv, envp, argc); // aqui entra a la funcion que te mostre
 	}
-	if (pipe(process->pipefd) < 0)
-		ft_error("ERROR: Pipe failed\n", 1);
-	create_process(&process, argv, envp);
+	else
+	{
+		if (argc < 5)
+		{
+			destroy_prh(process, argc - 3);
+			ft_error("ERROR: Invalid Arguments Format! \n", 1);
+		}
+	}
+	create_process_pipes(process, argv, envp, argc);
 	return (0);
 }
 
